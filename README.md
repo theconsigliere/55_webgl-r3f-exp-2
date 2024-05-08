@@ -2,4 +2,4 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## MxK R3F #2
 
-# Hover over planes moves to cursor cursor out goes back to origin
+### Hover over planes moves to cursor, cursor out goes back to origin
