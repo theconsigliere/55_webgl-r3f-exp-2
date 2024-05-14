@@ -8,16 +8,16 @@ import { useControls } from "leva"
 import GalleryScene from "../gallery/GalleryScene"
 
 export default function Scene() {
-  // const modelProps = useControls("Model Props", {
-  //   rotation: { value: 1, min: 0.0, max: 10 },
-  //   // amplitude: { value: 0.1, min: 0, max: 1 },
-  // })
+  const galleryProps = useControls("Gallery Props", {
+    margin: { value: 0.45, min: 0.0, max: 10 },
+    // amplitude: { value: 0.1, min: 0, max: 1 },
+  })
 
   return (
     <Canvas dpr={[1, 2]} style={{ backgroundColor: "#141414" }}>
       <Perf position={"bottom-left"} />
       <ScrollControls infinite distance={9}>
-        <GalleryScene />
+        <GalleryScene galleryProps={galleryProps} />
       </ScrollControls>
     </Canvas>
   )

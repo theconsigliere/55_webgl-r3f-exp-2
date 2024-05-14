@@ -12,8 +12,10 @@ export default function GalleryScene({ children, ...props }) {
 
   const { viewport } = useThree()
 
-  const sliderMargin = 0.45
-  const sliderLength = 9
+  const { galleryProps } = props
+
+  const sliderMargin = galleryProps.margin
+  const sliderLength = 6
   let sliderWidth = viewport.width / 3
 
   // 6 images
@@ -42,7 +44,8 @@ export default function GalleryScene({ children, ...props }) {
         image.position,
         "x",
         initialPosition -
-          scroll.offset * sliderLength * (sliderWidth + sliderMargin),
+          scroll.offset * sliderLength * (sliderWidth + sliderMargin) -
+          (sliderWidth + sliderMargin),
         0.15,
         delta
       )
