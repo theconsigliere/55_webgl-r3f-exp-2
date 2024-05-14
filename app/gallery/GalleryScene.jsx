@@ -40,12 +40,16 @@ export default function GalleryScene({ children, ...props }) {
       // 1 needs to be furthest away
       // initial position index * (sliderWidth + sliderMargin)
 
+      console.log(scroll.offset, scroll.offset * sliderLength)
+
       easing.damp(
         image.position,
         "x",
         initialPosition -
-          scroll.offset * sliderLength * (sliderWidth + sliderMargin) -
-          (sliderWidth + sliderMargin),
+          (sliderWidth + sliderMargin) - // offset to make first be middle
+          scroll.offset *
+            ((sliderLength * 2) / 3) *
+            (sliderWidth + sliderMargin),
         0.15,
         delta
       )
