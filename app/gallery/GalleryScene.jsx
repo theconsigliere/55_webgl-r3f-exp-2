@@ -18,8 +18,8 @@ export default function GalleryScene({ children, ...props }) {
   const sliderLength = 6
   let sliderWidth = viewport.width / 3
 
-  // 6 images
-  const images = [1, 2, 3, 4, 5, 1]
+  // 8 images
+  const images = [1, 2, 3, 4, 5, 1, 2, 3]
 
   const [clicked, setClick] = useState(false)
 
@@ -40,37 +40,18 @@ export default function GalleryScene({ children, ...props }) {
       // 1 needs to be furthest away
       // initial position index * (sliderWidth + sliderMargin)
 
-      console.log(scroll.offset, scroll.offset * sliderLength)
-
       easing.damp(
         image.position,
         "x",
         initialPosition -
-          (sliderWidth + sliderMargin) - // offset to make first be middle
+          //  (sliderWidth + sliderMargin) - // offset to make first slide be in middle
           scroll.offset *
-            ((sliderLength * 2) / 3) *
+            (sliderLength + 1) * // when offset is in middle * (sliderLength - 1)
             (sliderWidth + sliderMargin),
         0.15,
         delta
       )
-      // image.position.x =
-      //   (index + 1) * (sliderWidth + sliderMargin) * scroll.offset
     })
-
-    // Give me a value between 0 and 1
-    //   starting at the position of my item
-    //   ranging across 4 / total length
-    //   make it a sine, so the value goes from 0 to 1 to 0.
-
-    // HOVER ANIMATION
-    // easing.damp3(
-    //   state.camera.position,
-    //   hovered ? [-state.pointer.x, -state.pointer.y, 5] : [0, 0, 5],
-    //   0.425,
-    //   delta
-    // )
-
-    // state.camera.lookAt(0, 0, 0) // Look at center
   })
 
   const material = new THREE.MeshBasicMaterial({
@@ -90,21 +71,6 @@ export default function GalleryScene({ children, ...props }) {
         setHovered(false)
       }}
     >
-      {images.map((image, index) => (
-        // <mesh key={index} position={[index * (1 + margin), 0, 0]}>
-        //
-        // </mesh>
-        <Image
-          key={index}
-          ref={(el) => (imagesRef.current[index] = el)}
-          url={`/images/${image}.jpg`}
-          // position={[index * (sliderWidth + sliderMargin), 0, 0]}
-          segments={10}
-          scale={sliderWidth}
-        ></Image>
-      ))}
-
-      {/* REPEAT 6 MORE */}
       {images.map((image, index) => (
         // <mesh key={index} position={[index * (1 + margin), 0, 0]}>
         //

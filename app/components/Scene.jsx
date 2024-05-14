@@ -2,7 +2,7 @@
 import { Canvas } from "@react-three/fiber"
 // import { Model } from "./Model"
 import { Perf } from "r3f-perf"
-import { ScrollControls, Environment, OrbitControls } from "@react-three/drei"
+import { ScrollControls, Scroll } from "@react-three/drei"
 import { useControls } from "leva"
 
 import GalleryScene from "../gallery/GalleryScene"
