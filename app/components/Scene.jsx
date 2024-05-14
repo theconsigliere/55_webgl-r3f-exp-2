@@ -16,8 +16,8 @@ export default function Scene() {
   return (
     <Canvas dpr={[1, 2]} style={{ backgroundColor: "#141414" }}>
       <Perf position={"bottom-left"} />
-      <ScrollControls pages={5} infinite>
-        <GalleryScene position={[0, 0, 0]} />
+      <ScrollControls infinite distance={9}>
+        <GalleryScene />
       </ScrollControls>
     </Canvas>
   )
