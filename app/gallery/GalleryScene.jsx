@@ -9,7 +9,7 @@ export default function GalleryScene({ children, ...props }) {
   const objectRef = useRef()
   const imagesRef = useRef([])
   const [hovered, setHovered] = useState(false)
-
+  const [clicked, setClick] = useState(false)
   const { viewport } = useThree()
 
   const { galleryProps } = props
@@ -20,8 +20,6 @@ export default function GalleryScene({ children, ...props }) {
 
   // 8 images
   const images = [1, 2, 3, 4, 5, 1, 2, 3]
-
-  const [clicked, setClick] = useState(false)
 
   // make sure we have the smae amount of imageRefs as images
   useEffect(() => {
@@ -51,6 +49,20 @@ export default function GalleryScene({ children, ...props }) {
         0.15,
         delta
       )
+
+      // if image position is 1 or less or -1 or more than update greyscale value to 1
+      if (Math.abs(image.position.x) > 2) {
+        //   image.material.color.set("grey")
+        easing.damp(image.material, "grayscale", 1, 0.45, delta)
+        easing.damp(image.material, "opacity", 0.25, 0.45, delta)
+      } else {
+        easing.damp(image.material, "grayscale", 0, 0.45, delta)
+        easing.damp(image.material, "opacity", 1, 0.45, delta)
+      }
+
+      // snap scroll on scroll
+      console
+      // snap scroll on click
     })
   })
 
@@ -81,7 +93,11 @@ export default function GalleryScene({ children, ...props }) {
           url={`/images/${image}.jpg`}
           // position={[index * (sliderWidth + sliderMargin), 0, 0]}
           segments={10}
+          transparent={true}
           scale={sliderWidth}
+          onClick={() => {
+            setClick(true)
+          }}
         ></Image>
       ))}
     </group>
