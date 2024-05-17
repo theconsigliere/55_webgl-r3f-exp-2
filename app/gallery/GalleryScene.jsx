@@ -58,7 +58,6 @@ export default function GalleryScene({ children, ...props }) {
         damp(image.material, "opacity", 0.15, 0.45, delta)
       } else {
         // this is active!
-
         damp(image.material, "grayscale", 0, 0.45, delta)
         damp(image.material, "opacity", 1, 0.45, delta)
 
@@ -109,7 +108,6 @@ export default function GalleryScene({ children, ...props }) {
     >
       {images.map((image, index) => (
         // <mesh key={index} position={[index * (1 + margin), 0, 0]}>
-        //
         // </mesh>
         <Image
           key={index}
