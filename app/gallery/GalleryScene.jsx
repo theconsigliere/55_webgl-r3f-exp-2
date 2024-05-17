@@ -1,7 +1,7 @@
 import { act, useEffect, useRef, useState } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useScroll, Image } from "@react-three/drei"
-import { easing } from "maath"
+import { damp, expo } from "maath/easing"
 import * as THREE from "three"
 
 export default function GalleryScene({ children, ...props }) {
@@ -10,19 +10,17 @@ export default function GalleryScene({ children, ...props }) {
   const imagesRef = useRef([])
   const [hovered, setHovered] = useState(false)
   const [clicked, setClick] = useState(false)
+  const [scrollActivated, setScrollActivated] = useState(false)
   const { viewport } = useThree()
-
   const { galleryProps } = props
-  let activeIndex = 0
-
+  let activeIndex = null
   const sliderMargin = galleryProps.margin
-
   let sliderWidth = viewport.width / 3
 
   // 8 images
   const images = [1, 2, 3, 4, 5, 1, 2, 3]
   const sliderLength = images.length
-  const imagePositions = []
+  const initialImagePositions = []
 
   // make sure we have the smae amount of imageRefs as images
   useEffect(() => {
@@ -30,74 +28,48 @@ export default function GalleryScene({ children, ...props }) {
 
     // set initial position
     imagesRef.current.forEach((image, index) => {
-      imagePositions[index] = index * (sliderWidth + sliderMargin)
+      initialImagePositions[index] = index * (sliderWidth + sliderMargin)
     })
   })
 
-  console.log("imagePositions", imagePositions)
+  console.log("imagePositions", initialImagePositions)
 
   useFrame((state, delta) => {
     // move plane according to camera scroll
 
     // loop through images and update their position
     imagesRef.current.forEach((image, index) => {
-      easing.damp(
+      damp(
         image.position,
         "x",
-        imagePositions[index] -
+        initialImagePositions[index] -
           // (sliderWidth + sliderMargin) - // offset to make first slide be in middle
           scroll.offset *
             (sliderLength - 1) * // when offset is in middle * (sliderLength - 1)
             (sliderWidth + sliderMargin),
-        0.15,
+        0.1,
         delta
       )
 
       // if image position is 1 or less or -1 or more than update greyscale value to 1
-      if (Math.abs(image.position.x) > 1) {
+      if (Math.abs(image.position.x) > 1.5) {
         //   image.material.color.set("grey")
-        easing.damp(image.material, "grayscale", 1, 0.45, delta)
-        easing.damp(image.material, "opacity", 0.15, 0.45, delta)
+        damp(image.material, "grayscale", 1, 0.45, delta)
+        damp(image.material, "opacity", 0.15, 0.45, delta)
       } else {
         // this is active!
 
-        easing.damp(image.material, "grayscale", 0, 0.45, delta)
-        easing.damp(image.material, "opacity", 1, 0.45, delta)
+        damp(image.material, "grayscale", 0, 0.45, delta)
+        damp(image.material, "opacity", 1, 0.45, delta)
 
         activeIndex = index
-        console.log((sliderMargin + sliderWidth) * (index - activeIndex))
       }
 
       // snap scroll on scroll
 
-      // snap to active
-
-      if (scroll.delta === 0) {
-        // console.log("activeIndex", activeIndex)
-
-        //* if active index 6
-        //  sliderLength = 8 - 1
-
-        // 0 = sliderMargin + sliderWidth * -7
-        // 1 = sliderMargin + sliderWidth * -6
-        // 2 = sliderMargin + sliderWidth * -5
-        // 3 = sliderMargin + sliderWidth * -3
-        // 4 = sliderMargin + sliderWidth * -2
-        // 5 = sliderMargin + sliderWidth * -1
-        // 6 = sliderMargin + sliderWidth * 0
-        // 7 = sliderMargin + sliderWidth * 1
-
-        // if activeIndex is 6 how do we get to 0 using sliderLength and sliderWidth + sliderMargin
-
-        // if activeIndex is 0
-        // 0 = sliderMargin + sliderWidth * index (0) - activeIndex (0)
-        // 1 = sliderMargin + sliderWidth * index (1) - activeIndex (0)
-        // 2 = sliderMargin + sliderWidth * index (2) - activeIndex (0)
-        // 3 = sliderMargin + sliderWidth * index (3) - activeIndex (0)
-        // 4 = sliderMargin + sliderWidth * index (4) - activeIndex (0)
-        // 5 = sliderMargin + sliderWidth * index (5) - activeIndex (0)
-        // 6 = sliderMargin + sliderWidth * index (6) - activeIndex (0)
-        // 7 = sliderMargin + sliderWidth * index (7) - activeIndex (0)
+      // we have begun scrolling
+      if (scroll.delta === 0 && scroll.offset > 0) {
+        // snap to on scroll
 
         // if activeIndex is 1
         // index (0) - activeIndex (1) = -1
@@ -110,19 +82,17 @@ export default function GalleryScene({ children, ...props }) {
         // index (2) - activeIndex (2) = 0
         // index (3) - activeIndex (2) = 1
 
-        image.position.x = (sliderMargin + sliderWidth) * (index - activeIndex)
-
-        // MAKE THIS WORK
-        // easing.damp(
-        //   image.position,
-        //   "x",
-        //   (sliderMargin + sliderWidth) * (index - activeIndex),
-        //   0.15,
-        //   delta
-        // )
+        damp(
+          image.position,
+          "x",
+          (sliderMargin + sliderWidth) * (index - activeIndex),
+          0.25,
+          delta,
+          1,
+          expo.inOut,
+          0.1
+        )
       }
-
-      // snap scroll on click
     })
   })
 
@@ -130,12 +100,12 @@ export default function GalleryScene({ children, ...props }) {
     <group
       {...props}
       ref={objectRef}
-      onPointerOver={() => {
-        setHovered(true)
-      }}
-      onPointerOut={() => {
-        setHovered(false)
-      }}
+      // onPointerOver={() => {
+      //   setHovered(true)
+      // }}
+      // onPointerOut={() => {
+      //   setHovered(false)
+      // }}
     >
       {images.map((image, index) => (
         // <mesh key={index} position={[index * (1 + margin), 0, 0]}>
@@ -154,6 +124,8 @@ export default function GalleryScene({ children, ...props }) {
           }}
         ></Image>
       ))}
+
+      {/* <Image url={`/images/${1}.jpg`} scale={sliderWidth} segments={10} /> */}
     </group>
   )
 }
