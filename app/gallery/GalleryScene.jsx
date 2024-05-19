@@ -1,8 +1,7 @@
-import { act, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useFrame, useThree } from "@react-three/fiber"
 import { useScroll, Image } from "@react-three/drei"
 import { damp, expo } from "maath/easing"
-import * as THREE from "three"
 
 export default function GalleryScene({ children, ...props }) {
   const scroll = useScroll()
